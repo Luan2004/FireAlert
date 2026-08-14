@@ -1,0 +1,711 @@
+﻿<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fire Alert</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'var(--color-background)',
+            background_alt: 'var(--color-background-alt)',
+            secondary: 'var(--color-secondary)',
+            'secondary-highlight': 'var(--color-secondary-highlight)',
+            primary: 'var(--color-primary)',
+            'primary-variant': 'var(--color-primary-variant)',
+            selected: 'var(--color-selected)',
+            danger: 'var(--color-danger)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="fire.css" />
+</head>
+<body class="bg-background text-primary h-screen w-screen overflow-hidden flex font-sans transition-colors duration-300">
+
+  <div id="auth-screen" class="fixed inset-0 z-[200] flex bg-[#f7f8fb] text-[#17233c] dark:bg-[#0b1220] dark:text-primary">
+    <div class="grid min-h-screen w-full grid-cols-1 overflow-y-auto lg:grid-cols-[minmax(0,1.15fr)_minmax(420px,0.85fr)]">
+      <section class="relative flex min-h-[46vh] flex-col justify-between overflow-hidden bg-[#08111d] px-6 py-6 text-white sm:px-10 lg:min-h-screen lg:px-12 lg:py-10">
+        <img src="assets/auth-fire-monitor-bg.png" alt="" aria-hidden="true" class="absolute inset-0 size-full object-cover object-left opacity-90" />
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,10,18,0.58),rgba(8,17,29,0.72)_52%,rgba(8,17,29,0.96)),linear-gradient(180deg,rgba(4,10,18,0.35),rgba(4,10,18,0.08)_45%,rgba(4,10,18,0.78))]"></div>
+        <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-orange-400/70 via-cyan-300/40 to-transparent lg:inset-y-0 lg:left-auto lg:right-0 lg:h-auto lg:w-px lg:bg-gradient-to-b"></div>
+        <div class="absolute left-6 top-24 h-28 w-px bg-gradient-to-b from-transparent via-orange-400/70 to-transparent opacity-70 sm:left-10 lg:left-12"></div>
+        <div class="absolute right-10 top-10 hidden h-24 w-24 rounded-full border border-cyan-300/20 lg:block"></div>
+        <div class="absolute right-20 top-20 hidden h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_28px_rgba(103,232,249,0.8)] lg:block"></div>
+
+        <div class="relative z-10 flex items-center gap-3">
+          
+        </div>
+
+        <div class="relative z-10 my-10 max-w-2xl lg:my-0">
+          
+          <h1 class="max-w-2xl text-4xl font-extrabold leading-tight text-white drop-shadow-[0_3px_18px_rgba(0,0,0,0.42)] sm:text-5xl lg:text-6xl">Phát hiện cháy sớm, cảnh báo đúng người.</h1>
+          <p class="mt-5 max-w-xl text-base leading-7 text-white/75">Theo dõi camera, nhận diện lửa, khói và gửi cảnh báo bằng SMS hoặc cuộc gọi khi có nguy cơ cháy.</p>
+        </div>
+
+        <div class="relative z-10 grid gap-3 sm:grid-cols-3">
+          <div class="min-h-32 rounded-lg border border-white/10 bg-black/30 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-md">
+            <div class="mb-4 flex size-10 items-center justify-center rounded-lg bg-orange-400/15 text-orange-200 ring-1 ring-orange-300/25">
+              <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>
+            </div>
+            <div class="text-sm font-bold text-white">Giám sát 24/7</div>
+            <div class="mt-1.5 text-xs leading-5 text-white/70">Theo dõi camera liên tục và phát hiện dấu hiệu lửa/khói.</div>
+          </div>
+          <div class="min-h-32 rounded-lg border border-white/10 bg-black/30 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-md">
+            <div class="mb-4 flex size-10 items-center justify-center rounded-lg bg-cyan-400/15 text-cyan-200 ring-1 ring-cyan-300/25">
+              <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/><path d="M8 9h8M8 13h5"/></svg>
+            </div>
+            <div class="text-sm font-bold text-white">Gửi SMS tự động</div>
+            <div class="mt-1.5 text-xs leading-5 text-white/70">Thông báo nhanh đến số điện thoại đã đăng ký.</div>
+          </div>
+          <div class="min-h-32 rounded-lg border border-white/10 bg-black/30 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-md">
+            <div class="mb-4 flex size-10 items-center justify-center rounded-lg bg-red-400/15 text-red-200 ring-1 ring-red-300/25">
+              <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 5.18 2 2 0 0 1 5.06 3h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L9 10.67a16 16 0 0 0 4.33 4.33l1.24-1.24a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="text-sm font-bold text-white">Gọi khi khẩn cấp</div>
+            <div class="mt-1.5 text-xs leading-5 text-white/70">Tự động gọi lại nếu cảnh báo vẫn còn hoạt động.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="flex items-center justify-center px-5 py-10 sm:px-8 lg:px-10">
+        <div class="w-full max-w-md">
+          <div class="mb-8">
+            <h2 id="auth-title" class="text-3xl font-bold text-[#17233c] dark:text-primary">Đăng nhập</h2>
+            <p id="auth-subtitle" class="mt-2 text-sm text-[#61708a] dark:text-primary-variant">Truy cập hệ thống giám sát cháy</p>
+          </div>
+
+          <div id="auth-mode-switch" class="mb-5 grid grid-cols-2 rounded-lg bg-[#e8edf5] p-1 dark:bg-secondary">
+            <button type="button" data-auth-mode="login" class="rounded-md bg-selected px-3 py-2.5 text-sm font-semibold text-white transition">Đăng nhập</button>
+            <button type="button" data-auth-mode="register" class="rounded-md px-3 py-2.5 text-sm font-semibold text-[#61708a] transition dark:text-primary-variant">Đăng ký</button>
+          </div>
+
+          <form id="auth-form" class="rounded-lg border border-[#d9dee8] bg-white p-5 shadow-xl dark:border-secondary-highlight dark:bg-background_alt sm:p-6">
+            <div id="register-fields" class="hidden flex flex-col gap-4">
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-[#24344f] dark:text-primary">Họ và tên</label>
+                <input id="auth-full-name" type="text" class="w-full rounded-lg border border-[#d9dee8] bg-[#f8fafc] px-3 py-2.5 text-sm text-primary outline-none focus:border-[#0068ff] dark:border-secondary-highlight dark:bg-background" placeholder="Nguyễn Văn A" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-[#24344f] dark:text-primary">Số điện thoại</label>
+                <input id="auth-phone" type="tel" class="w-full rounded-lg border border-[#d9dee8] bg-[#f8fafc] px-3 py-2.5 text-sm text-primary outline-none focus:border-[#0068ff] dark:border-secondary-highlight dark:bg-background" placeholder="0901234567" />
+              </div>
+            </div>
+
+            <div class="mt-4 first:mt-0">
+              <label class="mb-1.5 block text-sm font-medium text-[#24344f] dark:text-primary">Gmail</label>
+              <input id="auth-email" type="email" class="w-full rounded-lg border border-[#d9dee8] bg-[#f8fafc] px-3 py-2.5 text-sm text-primary outline-none focus:border-[#0068ff] dark:border-secondary-highlight dark:bg-background" placeholder="email@example.com" required />
+            </div>
+
+            <div class="mt-4">
+              <label class="mb-1.5 block text-sm font-medium text-[#24344f] dark:text-primary">Mật khẩu</label>
+              <input id="auth-password" type="password" class="w-full rounded-lg border border-[#d9dee8] bg-[#f8fafc] px-3 py-2.5 text-sm text-primary outline-none focus:border-[#0068ff] dark:border-secondary-highlight dark:bg-background" placeholder="Nhập mật khẩu" required />
+            </div>
+
+            <div id="auth-message" class="mt-4 hidden rounded-lg p-2 text-sm"></div>
+
+            <button id="auth-submit" type="submit" class="mt-5 h-11 w-full rounded-lg bg-selected px-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:opacity-90">Đăng nhập</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+  <!-- FIRE ALERT POP-UP -->
+  <div id="fire-banner" class="hidden fixed bottom-4 right-4 w-72 z-50 flex flex-col gap-2 p-3 text-white shadow-2xl backdrop-blur-sm rounded-xl bg-red-600/95">
+    <div class="flex items-center gap-2 border-b border-white/20 pb-2">
+      <div class="text-2xl animate-pulse">🔥</div>
+      <div id="banner-level" class="y bg-black/40 px-2 py-0.5 rounded font-mono font-bold text-xs">LVL 3</div>
+      <div id="banner-title" class="text-base font-bold uppercase tracking-wider flex-1 truncate">PHÁT HIỆN CHÁY</div>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <div id="banner-desc" class="text-xs opacity-90">Độ tin cậy: 98% — Phát hiện: Lửa</div>
+      <div id="banner-cam" class="text-[10px] font-mono text-amber-200">📷 Nguồn: Camera 1</div>
+    </div>
+    <div class="flex justify-end gap-2 mt-1">
+      <button id="btn-mute" class="px-2 py-1 bg-black/30 hover:bg-black/50 rounded font-bold text-[10px] uppercase transition">🔊 TẮT ÂM</button>
+      <button id="btn-dismiss" class="px-2 py-1 bg-black/30 hover:bg-black/50 rounded font-bold text-[10px] uppercase transition">BỎ QUA 1P</button>
+    </div>
+  </div>
+
+  <!-- FRIGATE SIDEBAR -->
+  <aside id="app-sidebar" class="scrollbar-hidden absolute inset-y-0 left-0 z-10 flex w-[52px] flex-col justify-between overflow-y-auto border-r border-secondary-highlight bg-background_alt py-4 transition-colors duration-300">
+    <div class="flex w-full flex-col items-center gap-0">
+      <!-- Logo -->
+      <a href="#" class="mb-6 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-8 w-8 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+        </svg>
+      </a>
+
+      <!-- Live Menu Item -->
+      <div class="w-full" title="Giám Sát Live">
+        <div onclick="switchTab('live')" id="tab-live" class="mx-[10px] mb-4 flex flex-col items-center justify-center rounded-lg bg-selected cursor-pointer p-2 transition">
+          <svg viewBox="0 0 576 512" class="size-5 fill-current">
+            <path d="M336.2 64H47.8C21.4 64 0 85.4 0 111.8v288.4C0 426.6 21.4 448 47.8 448h288.4c26.4 0 47.8-21.4 47.8-47.8V111.8c0-26.4-21.4-47.8-47.8-47.8zm189.4 37.7L416 177.3v157.4l109.6 75.5c21.2 14.6 50.4-.6 50.4-25.8V127.5c0-25.4-29.1-40.4-50.4-25.8z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="w-full h-px bg-secondary-highlight my-2"></div>
+
+      <!-- Add RTSP Camera -->
+      <div class="w-full" title="Thêm Camera RTSP">
+        <div onclick="openAddStream()" class="mx-[10px] mb-2 flex flex-col items-center justify-center rounded-lg text-primary-variant hover:text-selected hover:bg-secondary cursor-pointer p-2 transition">
+          <svg viewBox="0 0 24 24" class="size-5 fill-current"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+      </div>
+
+      <!-- Add Webcam -->
+      <div class="w-full" title="Sử dụng Webcam">
+        <div onclick="openWebcam()" class="mx-[10px] mb-2 flex flex-col items-center justify-center rounded-lg text-primary-variant hover:text-selected hover:bg-secondary cursor-pointer p-2 transition">
+          <svg viewBox="0 0 24 24" class="size-5 fill-current">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Add Video File -->
+      <div class="w-full" title="Mô phỏng bằng Video (Tải lên)">
+        <div onclick="openVideoDialog()" class="mx-[10px] mb-2 flex flex-col items-center justify-center rounded-lg text-primary-variant hover:text-selected hover:bg-secondary cursor-pointer p-2 transition">
+          <svg viewBox="0 0 24 24" class="size-5 fill-current">
+            <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mb-8 flex flex-col items-center gap-4">
+      <!-- Theme Toggle -->
+      <div class="w-full" title="Giao diện Sáng/Tối">
+        <div class="hidden"></div>
+      </div>
+
+      <!-- Alert Settings -->
+      <div class="w-full" title="Cài đặt cảnh báo">
+        <div onclick="openAlertSettings()" class="mx-[10px] flex flex-col items-center justify-center rounded-lg text-primary-variant hover:bg-secondary cursor-pointer p-2 transition">
+          <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3.5"/>
+            <path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2.1 2.1 0 0 1-2.97 2.97l-.06-.06a1.8 1.8 0 0 0-1.98-.36 1.8 1.8 0 0 0-1.1 1.65V21a2.1 2.1 0 0 1-4.2 0v-.09a1.8 1.8 0 0 0-1.1-1.65 1.8 1.8 0 0 0-1.98.36l-.06.06a2.1 2.1 0 1 1-2.97-2.97l.06-.06A1.8 1.8 0 0 0 3.8 15a1.8 1.8 0 0 0-1.65-1.1H2a2.1 2.1 0 1 1 0-4.2h.09A1.8 1.8 0 0 0 3.74 8.6a1.8 1.8 0 0 0-.36-1.98l-.06-.06a2.1 2.1 0 0 1 2.97-2.97l.06.06a1.8 1.8 0 0 0 1.98.36A1.8 1.8 0 0 0 9.43 2.36V2a2.1 2.1 0 0 1 4.2 0v.09a1.8 1.8 0 0 0 1.1 1.65 1.8 1.8 0 0 0 1.98-.36l.06-.06a2.1 2.1 0 0 1 2.97 2.97l-.06.06a1.8 1.8 0 0 0-.36 1.98 1.8 1.8 0 0 0 1.65 1.1H21a2.1 2.1 0 1 1 0 4.2h-.09A1.8 1.8 0 0 0 19.4 15z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- System Menu Item -->
+      <div class="w-full" title="Trạng Thái Hệ Thống">
+        <div onclick="switchTab('system')" id="tab-system" class="mx-[10px] flex flex-col items-center justify-center rounded-lg text-primary-variant hover:bg-secondary cursor-pointer p-2 transition">
+          <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="12" rx="2"/>
+            <path d="M8 20h8M12 16v4"/>
+          </svg>
+        </div>
+      </div>
+
+      <div id="admin-nav-wrap" class="w-full hidden" title="Quản lý khách hàng">
+        <button type="button" onclick="switchTab('admin')" id="tab-admin" class="mx-[10px] flex flex-col items-center justify-center rounded-lg text-primary-variant hover:bg-secondary cursor-pointer p-2 transition">
+          <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- API Key Menu Item -->
+      <!-- <div class="w-full" title="Cấu hình API Key">
+        <div id="tab-apikey" class="hidden"></div>
+      </div> -->
+
+      <button id="btn-logout" type="button" class="hidden mx-[10px] flex flex-col items-center justify-center rounded-lg text-primary-variant hover:bg-secondary cursor-pointer p-2 transition" title="Đăng xuất">
+        <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <path d="M16 17l5-5-5-5"/>
+          <path d="M21 12H9"/>
+        </svg>
+      </button>
+
+      <!-- API Status -->
+      <div id="api-status-dot" class="w-2 h-2 rounded-full bg-red-500" title="API Status"></div>
+    </div>
+  </aside>
+
+  <div id="logout-confirm-dialog" class="fixed inset-0 z-[160] hidden items-center justify-center bg-black/35 backdrop-blur-sm p-4">
+    <div class="w-full max-w-sm rounded-lg border border-secondary-highlight bg-background_alt p-5 shadow-2xl text-primary">
+      <div class="mb-3 flex items-center gap-3">
+        <div class="flex size-10 items-center justify-center rounded-lg bg-red-500/10 text-red-500">
+          <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <path d="M16 17l5-5-5-5"/>
+            <path d="M21 12H9"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold">Xác nhận đăng xuất</h3>
+          <p class="text-sm text-primary-variant">Bạn có chắc muốn đăng xuất không?</p>
+        </div>
+      </div>
+      <div class="mt-5 flex justify-end gap-2">
+        <button type="button" onclick="closeLogoutConfirm()" class="h-10 px-4 rounded-lg bg-secondary text-primary font-semibold hover:bg-secondary-highlight">Hủy</button>
+        <button type="button" onclick="confirmLogout()" class="h-10 px-4 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main id="pageRoot" class="absolute right-0 top-0 bottom-0 left-[52px] overflow-hidden flex flex-col bg-background transition-colors duration-300">
+    
+    <!-- LIVE TAB -->
+    <div id="view-live" class="flex-1 flex-col h-full w-full flex">
+      <div class="flex h-12 w-full flex-row items-center justify-between p-2">
+        <div class="flex flex-1 text-primary-variant font-medium text-sm pl-2">
+          
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto w-full flex flex-col outline-none">
+        <div id="no-streams" class="flex size-full flex-col items-center justify-center text-center hidden">
+          <div class="mb-4 size-10 text-danger flex items-center justify-center">
+            <svg viewBox="0 0 24 24" class="size-10 fill-current"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+          </div>
+          <div class="mb-2 text-xl font-bold">No Cameras Found</div>
+          <div class="max-w-4xl text-sm text-primary-variant">
+            You must add a stream from the left sidebar to view the live dashboard.
+          </div>
+        </div>
+        <div id="streams-grid" class="grid w-full gap-2 px-2 pb-2 md:px-4 md:pb-4 grid-cols-1 md:grid-cols-3">
+          <!-- Videos will be injected here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SINGLE CAMERA VIEW TAB -->
+    <div id="view-single" class="flex-1 flex-col h-full w-full hidden">
+      <!-- Detailed Header -->
+      <div class="flex h-14 w-full flex-row items-center justify-between px-4 py-2 border-b border-secondary-highlight bg-background">
+        <!-- Left buttons -->
+        <div class="flex gap-2">
+          <button onclick="closeSingleView()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary-highlight text-sm font-medium transition text-primary">
+            <svg viewBox="0 0 24 24" class="size-4 fill-current"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Quay lại
+          </button>
+        </div>
+        
+        <!-- Right buttons -->
+        <div class="flex gap-2" id="single-cam-controls">
+          <!-- Phóng toàn màn hình -->
+          <button onclick="toggleSingleFullscreen()" class="flex items-center justify-center p-2 rounded-lg bg-secondary hover:bg-secondary-highlight text-primary transition" title="Toàn màn hình">
+            <svg viewBox="0 0 24 24" class="size-4 fill-current"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+          <!-- Power/Turn off -->
+          <button onclick="toggleSinglePower()" id="btn-single-power" class="flex items-center justify-center p-2 rounded-lg bg-selected text-white hover:opacity-90 transition" title="Tắt / Bật Camera">
+            <svg viewBox="0 0 24 24" class="size-4 fill-current"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+          </button>
+          <!-- Detection toggle -->
+          <button onclick="toggleSingleDetection()" id="btn-single-detect" class="flex items-center justify-center p-2 rounded-lg bg-selected text-white hover:opacity-90 transition" title="Bật / Tắt Phát hiện cháy">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <!-- Single Video Container -->
+      <div id="single-video-wrapper" class="flex-1 w-full h-full p-4 flex items-center justify-center bg-background relative">
+         <!-- Canvas will be moved here -->
+         <div id="single-placeholder" class="text-primary-variant animate-spin">
+           <svg viewBox="0 0 24 24" class="size-8 fill-none stroke-current stroke-2">
+             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.657-6.343l1.414-1.414M4.929 19.071l1.414-1.414m0-11.314l-1.414-1.414M19.071 19.071l-1.414-1.414" />
+           </svg>
+         </div>
+      </div>
+    </div>
+
+    <!-- SYSTEM TAB -->
+    <div id="view-system" class="flex-1 overflow-y-auto p-4 hidden flex-col w-full h-full">
+      <h1 class="text-xl font-bold mb-6 mt-2 px-2 text-primary">System Status</h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 px-2">
+        <div class="border border-secondary-highlight p-4 rounded-xl bg-background_alt shadow-sm">
+          <div id="stat-cameras" class="text-3xl font-bold text-primary">0</div>
+          <div class="text-sm text-primary-variant mt-2">Active Cameras</div>
+        </div>
+        <div class="border border-secondary-highlight p-4 rounded-xl bg-background_alt shadow-sm">
+          <div id="stat-models" class="text-lg font-mono text-primary-variant">Loading...</div>
+          <div class="text-sm text-primary-variant mt-2">AI Models Online</div>
+        </div>
+      </div>
+      <h2 class="text-xl font-bold mb-4 px-2 text-primary">Event Logs</h2>
+      <div class="flex-1 border border-secondary-highlight rounded-xl bg-background_alt overflow-hidden flex flex-col mx-2 shadow-sm">
+        <div id="event-logs" class="p-4 flex flex-col gap-3 overflow-y-auto max-h-[500px]">
+          <div class="text-primary-variant text-center py-8">System secure. No events.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API KEY CONFIGURATION TAB -->
+    <div id="view-apikey" class="flex-1 overflow-y-auto p-6 hidden flex-col w-full h-full">
+      <h1 class="text-xl font-bold mb-6 mt-2 px-2 text-primary">Cấu hình API Key</h1>
+      
+      <div class="max-w-2xl mx-2 border border-secondary-highlight rounded-xl bg-background_alt p-6 shadow-lg flex flex-col gap-4">
+        <div>
+          <h2 class="text-base font-bold text-primary mb-1">Triton API Key</h2>
+          <p class="text-xs text-primary-variant mb-4 font-normal">
+            Nhập mã API Key để kết nối an toàn với máy chủ Triton. Key này sẽ được lưu trữ an toàn trên máy chủ của bạn và tự động kết nối mỗi khi mở trang web.
+          </p>
+          
+          <div class="relative flex items-center">
+            <input id="input-api-key" type="password" placeholder="Nhập Triton API Key của bạn..." class="w-full bg-background border border-secondary-highlight rounded-lg py-2.5 pl-4 pr-12 text-primary outline-none focus:border-selected font-mono text-sm tracking-widest">
+            <button onclick="toggleApiKeyVisibility()" class="absolute right-3 text-primary-variant hover:text-primary p-1 focus:outline-none">
+              <svg id="eye-icon" viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div id="api-key-status" class="hidden text-xs px-3 py-2 rounded-lg bg-green-500/10 text-green-500 font-medium"></div>
+        
+        <div class="flex justify-end gap-3 mt-2">
+          <button onclick="saveApiKey()" class="bg-selected hover:opacity-90 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-md transition-all">Lưu API Key</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-admin" class="flex-1 overflow-y-auto p-4 md:p-6 hidden flex-col w-full h-full">
+      <div class="mx-auto w-full max-w-6xl">
+        <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-primary">Quản lý khách hàng</h1>
+            <p class="mt-1 text-sm text-primary-variant">Tạo, cập nhật, khóa và quản lý tài khoản.</p>
+          </div>
+          <div class="flex gap-2"><button type="button" onclick="openCurrentAdminProfile()" class="rounded-lg bg-secondary px-4 py-2.5 text-sm font-semibold text-primary hover:bg-secondary-highlight">Tài khoản của tôi</button><button type="button" onclick="openAdminUserForm()" class="rounded-lg bg-selected px-4 py-2.5 text-sm font-bold text-white shadow-md hover:opacity-90">+ Thêm khách hàng</button></div>
+        </div>
+        <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-xl border border-secondary-highlight bg-background_alt p-4"><div id="admin-stat-total" class="text-3xl font-bold text-black">0</div><div class="mt-1 text-sm text-primary-variant">Tổng tài khoản</div></div>
+          <div class="rounded-xl border border-secondary-highlight bg-background_alt p-4"><div id="admin-stat-active" class="text-3xl font-bold text-black">0</div><div class="mt-1 text-sm text-primary-variant">Đang hoạt động</div></div>
+          <div class="rounded-xl border border-secondary-highlight bg-background_alt p-4"><div id="admin-stat-disabled" class="text-3xl font-bold text-black">0</div><div class="mt-1 text-sm text-primary-variant">Đang khóa</div></div>
+          <div class="rounded-xl border border-secondary-highlight bg-background_alt p-4"><div id="admin-stat-alerts" class="text-3xl font-bold text-black">0</div><div class="mt-1 text-sm text-primary-variant">Cảnh báo đang hoạt động</div></div>
+        </div>
+        <div class="overflow-hidden rounded-xl border border-secondary-highlight bg-background_alt shadow-sm">
+          <div class="border-b border-secondary-highlight p-3"><input id="admin-user-search" type="search" oninput="renderAdminUsers()" placeholder="Tìm theo họ tên, email hoặc số điện thoại" class="w-full rounded-lg border border-secondary-highlight bg-background px-3 py-2 text-sm text-primary outline-none focus:border-selected"></div>
+          <div class="overflow-x-auto"><table class="w-full min-w-[760px] text-left text-sm"><thead class="bg-secondary text-primary-variant"><tr><th class="px-4 py-3">Khách hàng</th><th class="px-4 py-3">Liên hệ</th><th class="px-4 py-3">Vai trò</th><th class="px-4 py-3">Trạng thái</th><th class="px-4 py-3 text-right">Thao tác</th></tr></thead><tbody id="admin-users-table" class="divide-y divide-secondary-highlight"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="admin-user-dialog" class="fixed inset-0 z-[180] hidden items-center justify-center bg-black/50 p-4">
+    <form id="admin-user-form" class="w-full max-w-lg rounded-xl border border-secondary-highlight bg-background_alt shadow-2xl" onsubmit="submitAdminUser(event)">
+      <div class="flex items-center justify-between border-b border-secondary-highlight px-5 py-4"><h2 id="admin-user-dialog-title" class="text-lg font-bold text-primary">Thêm khách hàng</h2><button type="button" onclick="closeAdminUserForm()" class="text-xl text-primary-variant hover:text-primary">×</button></div>
+      <div class="grid gap-4 p-5"><input id="admin-user-original-email" type="hidden"><label class="text-sm text-primary-variant">Họ tên<input id="admin-user-name" required class="mt-1 w-full rounded-lg border border-secondary-highlight bg-background p-2 text-primary"></label><label class="text-sm text-primary-variant">Email<input id="admin-user-email" type="email" required class="mt-1 w-full rounded-lg border border-secondary-highlight bg-background p-2 text-primary"></label><label class="text-sm text-primary-variant">Số điện thoại<input id="admin-user-phone" required class="mt-1 w-full rounded-lg border border-secondary-highlight bg-background p-2 text-primary"></label><label class="text-sm text-primary-variant">Mật khẩu <span id="admin-password-hint">(tối thiểu 6 ký tự)</span><input id="admin-user-password" type="password" minlength="6" class="mt-1 w-full rounded-lg border border-secondary-highlight bg-background p-2 text-primary"></label><div class="grid grid-cols-2 gap-4"><label class="text-sm text-primary-variant">Vai trò<select id="admin-user-role" class="mt-1 w-full rounded-lg border border-secondary-highlight bg-background p-2 text-primary"><option value="customer">Khách hàng</option><option value="admin">Admin</option></select></label><label class="text-sm text-primary-variant">Trạng thái<select id="admin-user-status" class="mt-1 w-full rounded-lg border border-secondary-highlight bg-background p-2 text-primary"><option value="active">Hoạt động</option><option value="disabled">Khóa</option></select></label></div><p id="admin-user-error" class="hidden rounded-lg bg-red-500/10 p-2 text-sm text-red-500"></p></div>
+      <div class="flex justify-end gap-2 border-t border-secondary-highlight px-5 py-4"><button type="button" onclick="closeAdminUserForm()" class="rounded-lg bg-secondary px-4 py-2 text-sm text-primary">Hủy</button><button type="submit" class="rounded-lg bg-selected px-4 py-2 text-sm font-bold text-white">Lưu</button></div>
+    </form>
+  </div>
+
+  <!-- ADD STREAM DIALOG -->
+  <div id="add-dialog" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-background_alt border border-secondary-highlight w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col">
+      <div class="px-6 py-4 border-b border-secondary-highlight flex justify-between items-center bg-background">
+        <h3 class="font-bold text-lg text-primary">Thêm Camera IP</h3>
+        <button onclick="closeAddStream()" class="text-primary-variant hover:text-primary"><svg viewBox="0 0 24 24" class="size-5 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+      </div>
+      <div class="p-6 flex flex-col gap-4">
+        <div>
+          <label class="block text-sm text-primary-variant mb-1">Vị trí camera</label>
+          <input id="input-cam-name" type="text" placeholder="Ví dụ: Cổng chính" class="w-full bg-background border border-secondary-highlight rounded p-2 text-primary outline-none focus:border-selected">
+        </div>
+        <div>
+          <label class="block text-sm text-primary-variant mb-1">RTSP URL</label>
+          <input id="input-cam-url" type="text" placeholder="rtsp://192.168.1.100:554/stream" class="w-full bg-background border border-secondary-highlight rounded p-2 text-primary outline-none focus:border-selected">
+        </div>
+      </div>
+      <div class="px-6 py-4 bg-background border-t border-secondary-highlight flex justify-end gap-3">
+        <button onclick="closeAddStream()" class="px-4 py-2 rounded text-sm text-primary-variant hover:text-primary">Hủy</button>
+        <button onclick="submitAddStream()" class="bg-selected hover:opacity-90 text-white px-4 py-2 rounded text-sm font-bold shadow-md">Bắt đầu giám sát</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO SIMULATION DIALOG -->
+  <div id="video-dialog" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-background_alt border border-secondary-highlight w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col">
+      <div class="px-6 py-4 border-b border-secondary-highlight flex justify-between items-center bg-background">
+        <h3 class="font-bold text-lg text-primary">Thêm Video mô phỏng</h3>
+        <button onclick="closeVideoDialog()" class="text-primary-variant hover:text-primary"><svg viewBox="0 0 24 24" class="size-5 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+      </div>
+      <div class="p-6 flex flex-col gap-4">
+        <div>
+          <label class="block text-sm text-primary-variant mb-1">Vị trí</label>
+          <input id="input-video-location" type="text" placeholder="Ví dụ: Khu vực kho" class="w-full bg-background border border-secondary-highlight rounded p-2 text-primary outline-none focus:border-selected">
+        </div>
+        <div>
+          <label class="block text-sm text-primary-variant mb-1">Chọn video từ máy tính</label>
+          <input id="input-video-file" type="file" accept="video/*" class="w-full bg-background border border-secondary-highlight rounded p-2 text-primary file:mr-3 file:rounded file:border-0 file:bg-selected file:px-3 file:py-1 file:text-sm file:font-medium file:text-white hover:file:opacity-90">
+        </div>
+      </div>
+      <div class="px-6 py-4 bg-background border-t border-secondary-highlight flex justify-end gap-3">
+        <button onclick="closeVideoDialog()" class="px-4 py-2 rounded text-sm text-primary-variant hover:text-primary">Hủy</button>
+        <button onclick="submitVideoFile()" class="bg-selected hover:opacity-90 text-white px-4 py-2 rounded text-sm font-bold shadow-md">Bắt đầu mô phỏng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERT SETTINGS DIALOG -->
+  <div id="alert-settings-dialog" class="fixed inset-0 bg-black/35 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-5xl h-[min(760px,calc(100vh-48px))] bg-[#eef0f4] dark:bg-[#111827] border border-black/10 dark:border-white/10 rounded-lg shadow-2xl overflow-hidden flex flex-col md:flex-row text-[#17233c] dark:text-primary">
+      <aside class="w-full md:w-72 shrink-0 max-h-60 md:max-h-none overflow-y-auto bg-white dark:bg-background_alt border-b md:border-b-0 md:border-r border-[#d9dee8] dark:border-secondary-highlight flex flex-col">
+        <div class="h-16 px-5 flex items-center justify-between">
+          <h2 class="text-xl font-bold">Cài đặt</h2>
+        </div>
+        <nav class="px-3 py-2 flex flex-col gap-1 text-[15px]">
+          <button type="button" onclick="switchAlertSettingsSection('general')" data-settings-tab="general" class="settings-tab flex w-full min-w-0 items-center gap-3 px-3 py-3 rounded-lg text-left bg-[#e7f1ff] text-[#17345f] dark:bg-selected dark:text-white hover:bg-[#eef5ff] dark:hover:opacity-90">
+            <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2.1 2.1 0 0 1-2.97 2.97l-.06-.06a1.8 1.8 0 0 0-1.98-.36 1.8 1.8 0 0 0-1.1 1.65V21a2.1 2.1 0 0 1-4.2 0v-.09a1.8 1.8 0 0 0-1.1-1.65 1.8 1.8 0 0 0-1.98.36l-.06.06a2.1 2.1 0 1 1-2.97-2.97l.06-.06A1.8 1.8 0 0 0 3.8 15a1.8 1.8 0 0 0-1.65-1.1H2a2.1 2.1 0 1 1 0-4.2h.09A1.8 1.8 0 0 0 3.74 8.6a1.8 1.8 0 0 0-.36-1.98l-.06-.06a2.1 2.1 0 0 1 2.97-2.97l.06.06a1.8 1.8 0 0 0 1.98.36A1.8 1.8 0 0 0 9.43 2.36V2a2.1 2.1 0 0 1 4.2 0v.09a1.8 1.8 0 0 0 1.1 1.65 1.8 1.8 0 0 0 1.98-.36l.06-.06a2.1 2.1 0 0 1 2.97 2.97l-.06.06a1.8 1.8 0 0 0-.36 1.98 1.8 1.8 0 0 0 1.65 1.1H21a2.1 2.1 0 1 1 0 4.2h-.09A1.8 1.8 0 0 0 19.4 15z"/></svg>
+            <span>Cài đặt chung</span>
+          </button>
+          <button type="button" onclick="switchAlertSettingsSection('account')" data-settings-tab="account" class="settings-tab flex w-full min-w-0 items-center gap-3 px-3 py-3 rounded-lg text-left text-[#24344f] dark:text-primary-variant hover:bg-[#eef5ff] dark:hover:bg-secondary">
+            <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Tài khoản</span>
+          </button>
+          <button type="button" onclick="switchAlertSettingsSection('sms')" data-settings-tab="sms" class="settings-tab hidden w-full min-w-0 items-center gap-3 px-3 py-3 rounded-lg text-left text-[#24344f] dark:text-primary-variant hover:bg-[#eef5ff] dark:hover:bg-secondary">
+            <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+            <span>Tin nhắn SMS</span>
+          </button>
+          <button type="button" onclick="switchAlertSettingsSection('call')" data-settings-tab="call" class="settings-tab hidden w-full min-w-0 items-center gap-3 px-3 py-3 rounded-lg text-left text-[#24344f] dark:text-primary-variant hover:bg-[#eef5ff] dark:hover:bg-secondary">
+            <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 5.18 2 2 0 0 1 5.06 3h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L9 10.67a16 16 0 0 0 4.33 4.33l1.24-1.24a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92z"/></svg>
+            <span>Cài đặt cuộc gọi</span>
+          </button>
+          
+          <button type="button" onclick="switchAlertSettingsSection('appearance')" data-settings-tab="appearance" class="settings-tab flex w-full min-w-0 items-center gap-3 px-3 py-3 rounded-lg text-left text-[#24344f] dark:text-primary-variant hover:bg-[#eef5ff] dark:hover:bg-secondary">
+            <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36-.7-.7M6.34 6.34l-.7-.7m12.72 0-.7.7M6.34 17.66l-.7.7"/><circle cx="12" cy="12" r="4"/></svg>
+            <span>Giao diện</span>
+          </button>
+          <!-- <button type="button" onclick="switchAlertSettingsSection('apikey')" data-settings-tab="apikey" class="settings-tab flex w-full min-w-0 items-center gap-3 px-3 py-3 rounded-lg text-left text-[#24344f] dark:text-primary-variant hover:bg-[#eef5ff] dark:hover:bg-secondary">
+            <svg viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="7.5" cy="16.5" r="4.5"/>
+              <path d="M10.8 13.2 20 4"/>
+              <path d="M15.8 8.2 18.6 11"/>
+              <path d="M18 6 21 9"/>
+            </svg>
+            <span>API Key</span>
+          </button> -->
+        </nav>
+      </aside>
+
+      <section class="flex-1 min-w-0 relative overflow-hidden">
+        <button type="button" onclick="closeAlertSettings()" class="absolute right-4 top-4 z-10 size-10 rounded-lg flex items-center justify-center text-[#13223a] dark:text-primary hover:bg-black/5 dark:hover:bg-white/10">
+          <svg viewBox="0 0 24 24" class="size-6 fill-none stroke-current stroke-2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+
+        <div class="h-full overflow-y-auto px-4 md:px-8 py-16 md:py-20">
+          <div data-settings-section="account" class="settings-section max-w-3xl hidden">
+            <h3 class="text-xl font-bold mb-3">Thông tin tài khoản</h3>
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight">
+              <div class="px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div class="font-medium">Hồ sơ người dùng</div>
+                <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Thông tin này được dùng để xác định người nhận cảnh báo.</div>
+              </div>
+              <form id="settings-account-form" class="px-5 py-4 flex flex-col gap-4">
+                <div>
+                  <label for="settings-account-full-name" class="block text-sm text-[#61708a] dark:text-primary-variant mb-1">Họ và tên</label>
+                  <input id="settings-account-full-name" type="text" autocomplete="name" class="w-full bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 py-2.5 text-primary outline-none focus:border-[#0068ff]">
+                </div>
+                <div>
+                  <label for="settings-account-email" class="block text-sm text-[#61708a] dark:text-primary-variant mb-1">Gmail</label>
+                  <input id="settings-account-email" type="email" autocomplete="email" class="w-full bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 py-2.5 text-primary outline-none focus:border-[#0068ff]">
+                </div>
+                <div>
+                  <label for="settings-account-phone" class="block text-sm text-[#61708a] dark:text-primary-variant mb-1">Số điện thoại</label>
+                  <input id="settings-account-phone" type="tel" autocomplete="tel" class="w-full bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 py-2.5 text-primary outline-none focus:border-[#0068ff]">
+                </div>
+                <div id="settings-account-status" class="hidden text-xs px-3 py-2 rounded-lg font-medium"></div>
+                <div class="flex justify-end">
+                  <button id="settings-account-submit" type="submit" class="h-10 px-5 rounded-lg bg-[#0068ff] text-white font-semibold hover:bg-[#0056d6]">Lưu thay đổi</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div data-settings-section="general" class="settings-section max-w-3xl">
+            <h3 class="text-xl font-bold mb-3">Cài đặt chung</h3>
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight mb-5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div>
+                  <div class="font-medium">Thời gian chờ giữa các cuộc gọi</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="input-call-delay" type="number" min="5" step="1" class="w-24 h-10 bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 text-right text-primary outline-none focus:border-[#0068ff]">
+                  <span class="text-sm text-[#61708a] dark:text-primary-variant">giây</span>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div>
+                  <div class="font-medium">Gọi khi phát hiện cháy</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Bật hoặc tắt post cuộc gọi khi có thông báo cháy.</div>
+                </div>
+                <button type="button" onclick="toggleAlertSetting('callEnabled')" data-alert-toggle="callEnabled" aria-pressed="true" class="h-10 w-40 shrink-0 px-3 rounded-lg inline-flex items-center justify-center gap-2 font-semibold whitespace-nowrap transition">
+                  <span class="relative inline-flex h-5 w-10 items-center rounded-full bg-white/30">
+                    <span data-toggle-knob class="inline-block size-4 rounded-full bg-white transition-transform"></span>
+                  </span>
+                  <span data-toggle-label class="whitespace-nowrap">Đang bật</span>
+                </button>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div>
+                  <div class="font-medium">Thời gian chờ giữa các tin nhắn SMS</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="input-sms-delay" type="number" min="0" step="1" class="w-24 h-10 bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 text-right text-primary outline-none focus:border-[#0068ff]">
+                  <span class="text-sm text-[#61708a] dark:text-primary-variant">giây</span>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+                <div>
+                  <div class="font-medium">Nhắn tin khi phát hiện cháy</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Tin cháy mới và tin tăng cấp được gửi ngay, không chờ khoảng thời gian trên.</div>
+                </div>
+                <button type="button" onclick="toggleAlertSetting('smsEnabled')" data-alert-toggle="smsEnabled" aria-pressed="true" class="h-10 w-40 shrink-0 px-3 rounded-lg inline-flex items-center justify-center gap-2 font-semibold whitespace-nowrap transition">
+                  <span class="relative inline-flex h-5 w-10 items-center rounded-full bg-white/30">
+                    <span data-toggle-knob class="inline-block size-4 rounded-full bg-white transition-transform"></span>
+                  </span>
+                  <span data-toggle-label class="whitespace-nowrap">Đang bật</span>
+                </button>
+              </div>
+            </div>
+            <div class="hidden mt-5 justify-end mb-8">
+              <button type="button" onclick="saveAlertSettings()" class="h-10 px-5 rounded-lg bg-[#0068ff] text-white font-semibold hover:bg-[#0056d6]">Lưu thay đổi</button>
+            </div>
+            <h3 class="hidden text-xl font-bold mb-3">Cảnh báo realtime</h3>
+            <div class="hidden bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div>
+                  <div class="font-medium">Gửi cảnh báo theo trạng thái hiện tại</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">SMS và cuộc gọi chạy bằng hai flow Automate riêng.</div>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-[#e8f3ff] text-[#0068ff] text-sm font-semibold">Đang bật</span>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+                <div>
+                  <div class="font-medium">Dừng gọi khi cảnh báo kết thúc</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Flow gọi chỉ nhận cuộc gọi mới khi còn cháy active.</div>
+                </div>
+                <span class="relative inline-flex h-7 w-12 items-center rounded-full bg-[#0068ff]"><span class="inline-block size-5 translate-x-6 rounded-full bg-white"></span></span>
+              </div>
+            </div>
+          </div>
+
+          <div data-settings-section="sms" class="settings-section max-w-3xl hidden">
+            <h3 class="text-xl font-bold mb-3">Tin nhắn SMS</h3>
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight">
+              <div class="px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div class="font-medium">Nội dung khi xuất hiện đám cháy mới</div>
+                <div class="mt-2 rounded-lg bg-[#f4f6fa] dark:bg-background px-4 py-3 text-sm text-[#24344f] dark:text-primary">Cảnh báo cháy: Xuất hiện một đám cháy mới tại camera ...</div>
+              </div>
+              <div class="px-5 py-4">
+                <div class="font-medium">Nội dung khi cấp độ cháy tăng</div>
+                <div class="mt-2 rounded-lg bg-[#f4f6fa] dark:bg-background px-4 py-3 text-sm text-[#24344f] dark:text-primary">Cảnh báo cháy: Cấp độ cháy tăng lên cấp độ ... tại camera ...</div>
+              </div>
+            </div>
+          </div>
+
+          <div data-settings-section="call" class="settings-section max-w-3xl hidden">
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight mb-5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div>
+                  <div class="font-medium">Delay gửi tin nhắn</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Automate chỉ nhận SMS sau thời gian này kể từ lúc phát hiện cảnh báo.</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="legacy-input-sms-delay" type="number" min="0" step="1" class="w-24 h-10 bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 text-right text-primary outline-none focus:border-[#0068ff]">
+                  <span class="text-sm text-[#61708a] dark:text-primary-variant">giây</span>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+                <div>
+                  <div class="font-medium">Delay gọi lần đầu</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Automate chỉ nhận cuộc gọi đầu tiên sau thời gian này.</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="input-call-initial-delay" type="number" min="0" step="1" class="w-24 h-10 bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 text-right text-primary outline-none focus:border-[#0068ff]">
+                  <span class="text-sm text-[#61708a] dark:text-primary-variant">giây</span>
+                </div>
+              </div>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Cài đặt cuộc gọi</h3>
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4 border-b border-[#eef0f4] dark:border-secondary-highlight">
+                <div>
+                  <div class="font-medium">Delay gọi lại nếu chưa bắt máy</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Áp dụng sau khi flow gọi báo missed, rejected hoặc ended.</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="legacy-input-call-delay" type="number" min="5" step="1" class="w-24 h-10 bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg px-3 text-right text-primary outline-none focus:border-[#0068ff]">
+                  <span class="text-sm text-[#61708a] dark:text-primary-variant">giây</span>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+                <div>
+                  <div class="font-medium">Gọi ngay khi phát hiện cháy</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Cuộc gọi đầu tiên được cấp cho flow gọi ngay khi còn cảnh báo active.</div>
+                </div>
+                <span class="relative inline-flex h-7 w-12 items-center rounded-full bg-[#0068ff]"><span class="inline-block size-5 translate-x-6 rounded-full bg-white"></span></span>
+              </div>
+            </div>
+            <div class="mt-5 flex justify-end">
+              <button type="button" onclick="saveAlertSettings()" class="h-10 px-5 rounded-lg bg-[#0068ff] text-white font-semibold hover:bg-[#0056d6]">Lưu thay đổi</button>
+            </div>
+          </div>
+
+          <div data-settings-section="appearance" class="settings-section max-w-3xl hidden">
+            <h3 class="text-xl font-bold mb-3">Giao diện</h3>
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+                <div>
+                  <div class="font-medium">Chế độ sáng / tối</div>
+                  <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1">Đổi nhanh giao diện hiện tại của bảng điều khiển.</div>
+                </div>
+                <button type="button" onclick="toggleTheme()" class="h-10 min-w-32 px-4 rounded-lg bg-[#0068ff] text-white font-semibold hover:bg-[#0056d6] inline-flex items-center justify-center gap-2">
+                  <svg data-theme-icon="moon" viewBox="0 0 24 24" class="size-5 fill-current hidden">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                  <svg data-theme-icon="sun" viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  <span id="theme-toggle-label">Chế độ tối</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div data-settings-section="apikey" class="settings-section max-w-3xl hidden">
+            <h3 class="text-xl font-bold mb-3">Cấu hình API Key</h3>
+            <div class="bg-white dark:bg-background_alt rounded-lg overflow-hidden border border-white/60 dark:border-secondary-highlight">
+              <div class="px-5 py-4">
+                <div class="font-medium">Triton API Key</div>
+                <div class="text-sm text-[#61708a] dark:text-primary-variant mt-1 mb-4">Nhập mã API Key để kết nối an toàn với máy chủ Triton.</div>
+                <div class="relative flex items-center">
+                  <input id="settings-input-api-key" type="password" placeholder="Nhập Triton API Key..." class="w-full bg-white dark:bg-background border border-[#d9dee8] dark:border-secondary-highlight rounded-lg py-2.5 pl-4 pr-12 text-primary outline-none focus:border-[#0068ff] font-mono text-sm tracking-widest">
+                  <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-3 text-primary-variant hover:text-primary p-1 focus:outline-none">
+                    <svg id="settings-eye-icon" viewBox="0 0 24 24" class="size-5 fill-none stroke-current stroke-2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                </div>
+                <div id="settings-api-key-status" class="hidden text-xs px-3 py-2 rounded-lg bg-green-500/10 text-green-500 font-medium mt-3"></div>
+                <div class="mt-5 flex justify-end">
+                  <button type="button" onclick="saveApiKey()" class="h-10 px-5 rounded-lg bg-[#0068ff] text-white font-semibold hover:bg-[#0056d6]">Lưu API Key</button>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="fire.js?v=admin-20260807-2"></script>
+</body>
+</html>
