@@ -14,6 +14,7 @@ fire.html / fire.js
 ```
 <img width="1920" height="877" alt="image" src="https://github.com/user-attachments/assets/924e6261-f497-48f1-8448-52cc58406016" />
 
+<img width="1920" height="880" alt="image" src="https://github.com/user-attachments/assets/2a72d58d-7c01-41c7-85c9-182912b8a780" />
 
 ## 1. Install Flask on the PC
 
