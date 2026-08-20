@@ -26,6 +26,13 @@ except Exception as exc:
 else:
     IMAGE_IMPORT_ERROR = ""
 
+try:
+    import psutil
+except Exception as exc:
+    psutil = None
+    PSUTIL_IMPORT_ERROR = str(exc)
+else:
+    PSUTIL_IMPORT_ERROR = ""
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
@@ -933,9 +940,17 @@ def fire_css():
     return send_from_directory(BASE_DIR, "fire.css")
 
 
+@app.route("/auth-fire-monitor-bg.png")
+def auth_bg_image():
+    return send_from_directory(BASE_DIR, "auth-fire-monitor-bg.png")
+
+
 @app.route("/assets/<path:filename>")
 def assets(filename):
-    return send_from_directory(os.path.join(BASE_DIR, "assets"), filename)
+    assets_dir = os.path.join(BASE_DIR, "assets")
+    if os.path.exists(os.path.join(assets_dir, filename)):
+        return send_from_directory(assets_dir, filename)
+    return send_from_directory(BASE_DIR, filename)
 
 
 @app.route("/api/key", methods=["GET", "POST", "OPTIONS"])
@@ -1027,6 +1042,76 @@ def local_rtsp_preview():
         stream_rtsp_mjpeg(rtsp_url, fps=fps, quality=quality, max_height=max_height),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
+
+
+@app.route("/system-stats", methods=["GET", "OPTIONS"])
+@app.route("/api/system-stats", methods=["GET", "OPTIONS"])
+def system_stats():
+    if request.method == "OPTIONS":
+        return ("", 204)
+
+    if psutil is None:
+        return jsonify({
+            "success": False,
+            "error": f"psutil not available: {PSUTIL_IMPORT_ERROR}",
+            "stats": None
+        }), 500
+
+    try:
+        cpu_percent = psutil.cpu_percent(interval=None)
+        cpu_count_logical = psutil.cpu_count(logical=True) or 1
+        cpu_count_physical = psutil.cpu_count(logical=False) or cpu_count_logical
+
+        mem = psutil.virtual_memory()
+        
+        proc_mem = 0.0
+        proc_cpu = 0.0
+        try:
+            process = psutil.Process()
+            proc_mem = process.memory_info().rss / (1024 * 1024)
+            proc_cpu = process.cpu_percent(interval=None)
+        except Exception:
+            pass
+
+        stats = {
+            "timestamp": int(time.time() * 1000),
+            "cpu": {
+                "percent": round(float(cpu_percent), 1),
+                "cores_logical": int(cpu_count_logical),
+                "cores_physical": int(cpu_count_physical),
+                "process_percent": round(float(proc_cpu), 1),
+            },
+            "ram": {
+                "total_mb": round(float(mem.total) / (1024 * 1024)),
+                "used_mb": round(float(mem.used) / (1024 * 1024)),
+                "free_mb": round(float(mem.available) / (1024 * 1024)),
+                "percent": round(float(mem.percent), 1),
+                "process_mb": round(float(proc_mem), 1),
+            },
+            "gpu": None,
+        }
+
+        try:
+            import torch
+            if torch.cuda.is_available():
+                gpu_name = torch.cuda.get_device_name(0)
+                gpu_allocated_mb = round(torch.cuda.memory_allocated(0) / (1024 * 1024), 1)
+                gpu_reserved_mb = round(torch.cuda.memory_reserved(0) / (1024 * 1024), 1)
+                gpu_total_mb = round(torch.cuda.get_device_properties(0).total_memory / (1024 * 1024), 1)
+                gpu_percent = round((gpu_reserved_mb / max(1.0, gpu_total_mb)) * 100, 1)
+                stats["gpu"] = {
+                    "name": gpu_name,
+                    "used_mb": gpu_reserved_mb,
+                    "allocated_mb": gpu_allocated_mb,
+                    "total_mb": gpu_total_mb,
+                    "percent": gpu_percent,
+                }
+        except Exception:
+            pass
+
+        return jsonify({"success": True, "stats": stats})
+    except Exception as exc:
+        return jsonify({"success": False, "error": str(exc)}), 500
 
 
 @app.route("/settings", methods=["GET", "POST", "OPTIONS"])
