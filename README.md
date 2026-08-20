@@ -12,6 +12,8 @@ fire.html / fire.js
   -> Call Automate flow polls http://<PC-IP>:8765/automate/next-call
   -> Call flow posts call result to http://<PC-IP>:8765/automate/call-result
 ```
+<img width="1920" height="877" alt="image" src="https://github.com/user-attachments/assets/924e6261-f497-48f1-8448-52cc58406016" />
+
 
 ## 1. Install Flask on the PC
 
